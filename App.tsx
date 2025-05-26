@@ -1,18 +1,26 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View,Button, Image, Linking, TextStyle,TouchableOpacity, TextInput, SafeAreaView, ScrollView  } from 'react-native';
+import { StyleSheet, Text, View,Button, Image, Linking, TextStyle,TouchableOpacity, TextInput, SafeAreaView, ScrollView, FlatList, Dimensions} from 'react-native';
 import { useState }from 'react';
 import { NavigationContainer, useScrollToTop } from '@react-navigation/native';
 import { NativeStackNavigationProp} from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-
+import { Picker } from '@react-native-picker/picker';
+import MapView, {Marker} from 'react-native-maps';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { RouteProp } from '@react-navigation/native';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
+
+    <SafeAreaProvider>
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+      screenOptions={{
+      animation: 'slide_from_right', // or 'slide_from_right', 'slide_from_bottom' or 'fade' //animations for the app
+    }}
+  >
         <Stack.Screen name= "HomePage" component={HomePage} />
         <Stack.Screen name ="Six-Month Courses" component ={SixMonth} />
     <Stack.Screen name = "Six-Week Courses" component={SixWeek} 
@@ -24,23 +32,23 @@ export default function App() {
     <Stack.Screen name="Child Minding" component={ChildMinding}/>
     <Stack.Screen name= "Cooking" component={Cooking}/>
     <Stack.Screen name="Garden Maintenance" component={GardenMaintenance}/>
+    <Stack.Screen name="Calculate Fees" component={CalculateFees}/>
+    <Stack.Screen name="Contact Us" component={Contact}/>
+    <Stack.Screen name="Select Courses" component={SelectCourse}/>
+    <Stack.Screen name="Thank You" component={ThankYou}/>
       </Stack.Navigator>
     </NavigationContainer>
+    </SafeAreaProvider>
   );
-}
+};
 
 
 function HomePage({navigation}){
-  const [SixMonth, setSixMonth] = useState('');
-  const[ SixWeek, setSixWeek] = useState('');
-  const [ViewDiscounts, setViewDiscounts] = useState('');
-
-  const [selectedValue, setSelectedValue] = useState('0');
-
-
+  
   return(
     <View style={styles.container}>
       <View style ={styles.headerContainer}>
+        
      <Image
         source={require('./assets/xhaw logo.png')} //logo and header title
         style={styles.logo}
@@ -48,6 +56,7 @@ function HomePage({navigation}){
       />
       <Text style={styles.title}>Empowering The Nation</Text>
 </View>
+
 <View style={styles.spacer}>
   </View>
        <Text style={styles.aboutText}>About Us</Text>
@@ -55,7 +64,7 @@ function HomePage({navigation}){
   </View>
 
     
-    <View style={styles.box}>
+    <View style={styles.box}> {/*box dispalyed that will contain the About Us information*/}
     <Text style={{fontWeight:'bold',fontFamily:'sans-serif', color:'black',padding: 20, fontSize:25, justifyContent:'center',textAlign:'auto',}}>Empowering the nation was established in 2012 and offers courses in Johnannesburg.
       Hundreds of Domestic workers and Gardeners have trained on both 6 month and 6 week programmes and can provide more marketable skills.
     </Text>
@@ -67,14 +76,14 @@ function HomePage({navigation}){
     
 
     
-  <View style={styles.mtext}>
+  <View style={styles.mtext}> {/*text for homepage*/}
     <View style={styles.headerContainer}>
     <Image
         source={require('./assets/grad1.png')} //logo and header title
         style={styles.logo}
         resizeMode="contain"
       />
-<TouchableOpacity style={styles.monthText} onPress={()=> navigation.navigate('Six-Month Courses')}>
+<TouchableOpacity style={styles.monthText} onPress={()=> navigation.navigate('Six-Month Courses')}> {/*this ensure that the user is able to navigate to the screens*/}
       <Text style={styles.monthText}>Summary on six-month courses</Text>
     </TouchableOpacity>
     </View>
@@ -89,6 +98,10 @@ function HomePage({navigation}){
       <Text style={styles.monthText}>Summary on six-week courses</Text>
     </TouchableOpacity>
     </View>
+    <View style={styles.spacer}></View>
+    <TouchableOpacity style={styles.button} onPress={()=> navigation.navigate('Contact Us')}>
+    <Text style={styles.buttonText}>CONTACT US</Text>
+    </TouchableOpacity>
 </View>
 
 
@@ -110,6 +123,7 @@ const [DiscountSummary, setDiscountSummary]=useState('');
 
 return(
   <View style={styles.SixMonthcontainer}>
+    <View style={styles.spacer}></View>
     <View style={styles.headerContainer}>
     <Image
         source={require('./assets/xhaw logo.png')} //logo and header title
@@ -118,20 +132,22 @@ return(
       />
       <Text style={styles.title}>Empowering The Nation</Text>
     </View>
-   
+   <View style={styles.coursesspacer}></View>
     <Text style={styles.sumText}>Six-Month Courses</Text>
-    <View style={styles.spacer}>
-    </View>
-
+    
+<View style={styles.spacer}></View>
     <View style={styles.headerContainer}>
+      
   <Image
         source={require('./assets/first aid.png')} //logo and header title
-        style={styles.logo}
+        style={styles.firstaidlogo}
         resizeMode="contain"
       />
+      
       <TouchableOpacity style = {styles.aidText} onPress={()=> navigation.navigate('First-Aid')}>
-      <Text style={styles.monthText}>First-Aid</Text>
+      <Text style={styles.aidText}>First-Aid</Text>
       </TouchableOpacity>
+      
       <View style={styles.spacer}>
       </View>
 </View>
@@ -139,7 +155,7 @@ return(
       <View style={styles.headerContainer}>
   <Image
         source={require('./assets/sewing.png')} //logo and header title
-        style={styles.logo}
+        style={styles.sewinglogo}
         resizeMode="contain"
       />
       <TouchableOpacity style={styles.sewtext} onPress={()=> navigation.navigate('Sewing')}>
@@ -152,7 +168,7 @@ return(
       <View style={styles.headerContainer}>
   <Image
         source={require('./assets/landscaping.png')} //logo and header title
-        style={styles.logo}
+        style={styles.lanscapinglogo}
         resizeMode="contain"
       />
       <TouchableOpacity style={styles.aidText} onPress={()=> navigation.navigate('Landscaping')}>
@@ -163,31 +179,25 @@ return(
       <View style={styles.headerContainer}>
   <Image
         source={require('./assets/life skills.png')} //logo and header title
-        style={styles.logo}
+        style={styles.lifeskillslogo}
         resizeMode="contain"
       />
       <TouchableOpacity style={styles.aidText} onPress={()=> navigation.navigate('Life-Skills')}>
       <Text style={styles.sewtext}>Life Skills</Text>
       </TouchableOpacity>
       </View>
-      <View style={styles.spacer}>
-    </View>
+      <View style={styles.coursesspacer}></View>
     <Text style={styles.distext}> Discount Summary</Text>
-    <View style={styles.spacer}>
-    </View>
-    <View style={styles.discountImage}>
+    <View style={styles.coursesspacer}></View>
+    <View style={styles.discountImage}> {/*image that displays discount*/}
   <Image style={styles.discountImage}
-        source={require('./assets/discounts.png')} //logo and header title
+        source={require('./assets/discountsum.png')} //logo and header title
        
       />
       </View>
 </View>
-
-
-
-  
-)
-}
+);
+};
 
 
 
@@ -211,14 +221,14 @@ function SixWeek({navigation}){
         />
         <Text style={styles.title}>Empowering The Nation</Text>
       </View>
-     
+     <View style={styles.spacer}></View>
       <Text style={styles.sumText}>Six-Week Courses</Text>
-      <View style={styles.spacer}>
-      </View>
+      <View style={styles.spacer}></View>
+    
       <View style={styles.headerContainer}>
     <Image
           source={require('./assets/child minding.png')} //logo and header title
-          style={styles.logo}
+          style={styles.childmindinglogo}
           resizeMode="contain"
         />
         <TouchableOpacity style={styles.aboutText} onPress={()=> navigation.navigate('Child Minding')}>
@@ -231,7 +241,7 @@ function SixWeek({navigation}){
         <View style={styles.headerContainer}>
     <Image
           source={require('./assets/cooking.png')} //logo and header title
-          style={styles.logo}
+          style={styles.cookinglogo}
           resizeMode="contain"
         />
         <Text style={styles.sewtext}>Cooking</Text>
@@ -239,21 +249,20 @@ function SixWeek({navigation}){
         <View style={styles.headerContainer}>
     <Image
           source={require('./assets/garden maintenance.png')} //logo and header title
-          style={styles.logo}
+          style={styles.gardenmaintenancelogo}
           resizeMode="contain"
         />
         <Text style={styles.sewtext}>Garden Maintenance</Text>
         </View>
    
         
-        <View style={styles.spacer}>
-      </View>
+       
       <Text style={styles.distext}> Discount Summary</Text>
       <View style={styles.spacer}>
       </View>
       <View style={styles.discountImage}>
     <Image style={styles.discountImage}
-          source={require('./assets/discounts.png')} //logo and header title
+          source={require('./assets/discountsum.png')} //logo and header title
          
         />
         </View>
@@ -281,7 +290,7 @@ return(
       <View style={styles.headerContainer}>
       <Image
         source={require('./assets/first aid.png')} //logo and header title
-        style={styles.logo}
+        style={styles.firstaidlogo}
         resizeMode="contain"
       />
 <Text style={styles.distext}>First-Aid</Text>
@@ -312,7 +321,7 @@ return(
 </View>
 <View style={styles.spacer}></View>
 <View style={styles.Buttoncontainer}>
-<Button title="Select Course" color="#F8A72A"/>
+<Button title="Select Courses" color='#F8A72A' onPress={()=> navigation.navigate('Select Courses')}/>
 <Button title="View Next" color='#F8A72A' onPress={()=> navigation.navigate('Sewing')}/>
     </View>
     </View>
@@ -336,7 +345,7 @@ function Sewing({navigation}){
       <View style={styles.headerContainer}>
       <Image
         source={require('./assets/sewing.png')} //logo and header title
-        style={styles.logo}
+        style={styles.sewinglogo}
         resizeMode="contain"
       />
 <Text style={styles.distext}>Sewing</Text>
@@ -367,7 +376,7 @@ function Sewing({navigation}){
 </View>
 <View style={styles.spacer}></View>
 <View style={styles.SewingButtoncontainer}>
-<Button title="Select Course" color="#F8A72A" />
+<Button title="Select Courses" color='#F8A72A' onPress={()=> navigation.navigate('Select Courses')}/>
 <Button title="View Next" color='#F8A72A'onPress={()=> navigation.navigate('Landscaping')}/>
     </View>
     </View>
@@ -390,7 +399,7 @@ function Landscaping({navigation}){
       <View style={styles.headerContainer}>
       <Image
         source={require('./assets/landscaping.png')} //logo and header title
-        style={styles.logo}
+        style={styles.lanscapinglogo}
         resizeMode="contain"
       />
 <Text style={styles.distext}>Landscaping</Text>
@@ -421,7 +430,7 @@ function Landscaping({navigation}){
 </View>
 <View style={styles.spacer}></View>
 <View style={styles.LandscapingButtoncontainer}>
-<Button title="Select Course" color="#F8A72A"/>
+<Button title="Select Courses" color='#F8A72A' onPress={()=> navigation.navigate('Select Courses')}/>
 <Button title="View Next" color='#F8A72A'onPress={()=> navigation.navigate('Life-Skills')}/>
     </View>
     </View>
@@ -444,7 +453,7 @@ function LifeSkills({navigation}){
       <View style={styles.headerContainer}>
       <Image
         source={require('./assets/life skills.png')} //logo and header title
-        style={styles.logo}
+        style={styles.lifeskillslogo}
         resizeMode="contain"
       />
 <Text style={styles.distext}>Life-Skills</Text>
@@ -475,12 +484,14 @@ function LifeSkills({navigation}){
 </View>
 <View style={styles.spacer}></View>
 <View style={styles.Buttoncontainer}>
-<Button title="Select Course" color="#F8A72A"/>
+<Button title="Select Courses" color='#F8A72A' onPress={()=> navigation.navigate('Select Courses')}/>
 <Button title="HomePage" color='#F8A72A' onPress={()=> navigation.navigate('HomePage')}/>
     </View>
     </View>
-  )
-}
+  );
+};
+
+
 function ChildMinding({navigation}){
   return(
     <View style={styles.ChildMindingcontainer}>
@@ -496,8 +507,8 @@ function ChildMinding({navigation}){
       <View style={styles.spacer}></View>
       <View style={styles.headerContainer}>
       <Image
-        source={require('./assets/life skills.png')} //logo and header title
-        style={styles.logo}
+        source={require('./assets/child minding.png')} //logo and header title
+        style={styles.childmindinglogo}
         resizeMode="contain"
       />
 <Text style={styles.distext}>Child Minding</Text>
@@ -523,17 +534,17 @@ function ChildMinding({navigation}){
 <View style={styles.spacer}></View>
 
 <View style={styles.FirstAidbox}>
-<Text style={{color:'black',fontWeight:'bold',fontSize:25, fontFamily:'sans-serif'}}>Course:R1500</Text>
+<Text style={{color:'black',fontWeight:'bold',fontSize:25, fontFamily:'sans-serif'}}>Course:R750</Text>
 
 </View>
 <View style={styles.spacer}></View>
 <View style={styles.ChildMindingButtoncontainer}>
-<Button title="Select Course" color="#F8A72A"/>
+<Button title="Select Courses" color='#F8A72A' onPress={()=> navigation.navigate('Select Courses')}/>
 <Button title="View Next" color='#F8A72A' onPress={()=> navigation.navigate('Cooking')}/>
     </View>
     </View>
-  )
-}
+  );
+};
 function Cooking({navigation}){
   return(
 <View style={styles.cookingcontainer}>
@@ -550,7 +561,7 @@ function Cooking({navigation}){
       <View style={styles.headerContainer}>
       <Image
         source={require('./assets/life skills.png')} //logo and header title
-        style={styles.logo}
+        style={styles.cookinglogo}
         resizeMode="contain"
       />
 <Text style={styles.distext}>Cooking</Text>
@@ -576,12 +587,12 @@ function Cooking({navigation}){
 <View style={styles.spacer}></View>
 
 <View style={styles.FirstAidbox}>
-<Text style={{color:'black',fontWeight:'bold',fontSize:25, fontFamily:'sans-serif'}}>Course:R1500</Text>
+<Text style={{color:'black',fontWeight:'bold',fontSize:25, fontFamily:'sans-serif'}}>Course:R750</Text>
 
 </View>
 <View style={styles.spacer}></View>
 <View style={styles.cookingButtoncontainer}>
-<Button title="Select Course" color="#F8A72A"/>
+<Button title="Select Courses" color='#F8A72A' onPress={()=> navigation.navigate('Select Courses')}/>
 <Button title="View Next" color='#F8A72A' onPress={()=> navigation.navigate('Garden Maintenance')}/>
     </View>
     </View>
@@ -600,11 +611,11 @@ function GardenMaintenance({navigation}){
         <Text style={styles.title}>Empowering The Nation</Text>
       
       </View>
-      <View style={styles.spacer}></View>
+      
       <View style={styles.headerContainer}>
       <Image
         source={require('./assets/garden maintenance.png')} //logo and header title
-        style={styles.logo}
+        style={styles.gardenmaintenancelogo}
         resizeMode="contain"
       />
 <Text style={styles.distext}>Garden Maintenance</Text>
@@ -630,17 +641,366 @@ function GardenMaintenance({navigation}){
 <View style={styles.spacer}></View>
 
 <View style={styles.FirstAidbox}>
-<Text style={{color:'black',fontWeight:'bold',fontSize:25, fontFamily:'sans-serif'}}>Course:R1500</Text>
+<Text style={{color:'black',fontWeight:'bold',fontSize:25, fontFamily:'sans-serif'}}>Course:R750</Text>
 
 </View>
 <View style={styles.spacer}></View>
 <View style={styles.GardenMaintenanceButtoncontainer}>
-<Button title="Select Course" color="#F8A72A"/>
 <Button title="HomePage" color='#F8A72A' onPress={()=> navigation.navigate('HomePage')}/>
+<Button title="Select Courses" color='#F8A72A' onPress={()=> navigation.navigate('Select Courses')}/>
     </View>
     </View>
-  )
+  );
+};
+
+function SelectCourse({navigation}){
+  const [Name, setName]= useState('');
+  const [Email,setEmail]=useState('');
+  const [Number, setNumber]=useState('');
+  const [selectCourse, setSelectedCourse]=useState<string[]>([]);
+  const [Message, setMessage]= useState('');
+
+  const courses = [
+    { id: '1', name: 'First-Aid', price: 1500 },
+    { id: '2', name: 'Sewing', price:1500 },
+    { id: '3', name: 'Landscaping' , price:1500 },   //function for courses in terms of calculating averages
+    { id: '4', name: 'Life-Skills', price: 1500 },
+    { id: '5', name: 'Child Minding' , price:750 },
+    { id: '6', name: 'Cooking', price:750 },
+    { id: '7', name: 'Garden Maintenance', price:750 },
+  ];
+
+
+  const toggleCourse = (id: string) => {
+    setSelectedCourse((prev) =>
+      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
+    );
+  };
+
+  const handleRegister = () => {
+    const selected = courses.filter(courses => selectCourse.includes(courses.id)); //routing infor from Select Courses to Calculate fees page
+    navigation.navigate('Calculate Fees', {  selectCourse: selected });
+  };
+
+  const handleAddInfo = () => {
+    if (Name && Email && Number) {
+      // Normally you'd save the data here
+      setMessage('Info added ✅');
+
+      // Optional: clear inputs after adding
+      setName('');
+      setEmail('');
+      setNumber('');
+    } else {
+      setMessage('Please fill out all fields');
+    }
+  };
+
+
+
+  return(
+    <View style={styles.CalculateFeescontainer}>
+      <View style={styles.headerContainer}>
+    <Image
+          source={require('./assets/xhaw logo.png')} //logo and header title
+          style={styles.logo}
+          resizeMode="contain"
+          
+        />
+        <Text style={styles.title}>Empowering The Nation</Text>
+      
+      </View>
+      <View style={styles.spacer}></View>
+      <Text style={{fontSize:20, fontWeight:'bold', fontFamily:'serif'}}>Please enter your details:</Text>
+      <View style={styles.Detailsbox}>
+      <TextInput
+            style={styles.InputBoxs}
+            placeholder="Enter Name"
+            value={Name}
+            onChangeText={setName}
+          />
+          <TextInput
+            style={styles.InputBoxs}
+            placeholder="Enter Email"
+            value={Email}
+            onChangeText={setEmail}
+          />
+          <TextInput
+            style={styles.InputBoxs}
+            placeholder="Enter Cellphone Number"
+            value={Number}
+            onChangeText={setNumber}
+            keyboardType="numeric"
+          />
+          <Button title="Submit Info" color="#FA872A" onPress={handleAddInfo}  /> {/*when button is clicked thefunction of handling the info is executed*/}
+
+          {Message !== '' && <Text style={styles.Message}>{Message}</Text>} {/*A display message that handles error*/}
+          </View>
+          
+          <View style={styles.spacer}></View>
+
+    <Text style={{fontSize:20, fontWeight:'bold', fontFamily:'serif'}}>Select Courses:</Text>
+
+    <FlatList 
+         data={courses}
+         keyExtractor={(item) => item.id}  
+         renderItem={({ item }) => {
+           const isSelected = selectCourse.includes(item.id);
+           return (
+          
+          <TouchableOpacity
+          style={[styles.CourseItem, isSelected && styles.SelectedItem]}
+          onPress={() => toggleCourse(item.id)}
+        >
+            <Text>{item.name} (R{item.price})</Text>
+          </TouchableOpacity>
+        )
+  }}
+      />
+       <Text style={{color:'black', fontFamily:'sans-serif', fontWeight:'bold', fontSize:15}}>
+        Selected: {selectCourse.map((id) => courses.find(c => c.id === id)?.name).join(', ')}
+      </Text>
+      <View style={styles.coursesspacer}></View>
+    <Button title="Submit" color="#FA872A" onPress={handleRegister}  />   {/*routes navigation of screens*/}
+   
+</View>
+
+          
+    
+  );
+};
+
+
+interface RouteParams {
+  selectCourse: { id: string; name: string; price: number }[]; }
+   {/**function that sends info to the calculate page screen */}
+
+
+function CalculateFees({ navigation, route}: { route: { params: RouteParams } }){
+  const selectCourse = route?.params?.selectCourse?.filter(
+    (courses) => courses && !isNaN(Number(courses.price))
+  ) ??  [];  {/*this allows the select course and its price to be displayed on the screen from the previous screen*/} 
+
+
+
+
+
+ 
+  
+//total price of course
+  let total: number = 0;
+for (const courses of selectCourse) {
+  total += Number(courses.price);
 }
+
+  // Calculate discount based on number of selected courses
+  let discountRate = 0;
+  if (selectCourse.length === 2) {
+    discountRate = 0.05;
+  } else if (selectCourse.length === 3) {
+    discountRate = 0.10;
+  } else if (selectCourse.length > 3) {
+    discountRate = 0.15;
+  }
+
+  const discount = discountRate * total;
+  const finalTotal = total - discount;  //calculation for for the courses
+
+  return (
+    <View style={styles.CalculateFeescontainer}>
+      <View style={styles.headerContainer}>
+    <Image
+          source={require('./assets/xhaw logo.png')} //logo and header title
+          style={styles.logo}
+          resizeMode="contain"
+          
+        />
+        <Text style={styles.title}>Empowering The Nation</Text>
+      
+      </View>
+      <View style={styles.spacer}></View>
+      <View style={styles.mainPicture}>
+      <Image style={styles.imageSize}
+        source={require('./assets/fees.png')}/>
+      </View>
+      <View style={styles.spacer}></View>
+      <Text style={styles.title}>Calculate fees:</Text>
+      
+      <View style={styles.spacer}></View>
+
+      
+      <Text style={{fontFamily:'sans-serif', fontSize:25, fontWeight:'bold'}}>Courses Selected: {selectCourse.map(c => c.name).join(', ')} </Text>
+      
+      <View style={styles.spacer}></View>
+      <View style={styles.FirstAidbox}>
+      {selectCourse.map((course: any, index: number) => (
+        <Text key={index}>• {course.name} - R{Number(course.price)}</Text>
+        
+      ))}
+      </View>
+      <View style={styles.spacer}></View>
+      
+      <Text style={{fontFamily:'sans-serif', fontSize:25, fontWeight:'bold'}}>Total: R{total.toFixed(2)}</Text>
+      {discount > 0 && (
+        <Text style={styles.distext}>
+          Discount ({(discountRate * 100).toFixed(0)}%): -R{discount.toFixed(2)}
+        </Text>
+      )}
+      
+      <Text style={{fontFamily:'sans-serif', fontSize:25, fontWeight:'bold'}}>Amount to Pay: R{finalTotal.toFixed(2)}</Text>
+      <View style={styles.spacer}></View>
+      <View style={styles.cookingButtoncontainer}>
+<Button title="Contact Us" color='#F8A72A' onPress={()=> navigation.navigate('Contact Us')}/>
+<Button title="HomePage" color='#F8A72A' onPress={()=> navigation.navigate('HomePage')}/>
+  <Button title="Finish" color='#F8A72A' onPress={()=> navigation.navigate('Thank You')}/>
+    </View>
+    </View>
+    
+  );
+}
+
+
+function Contact({navigation}){
+ return(
+  <View style={styles.ContactUscontainer}>
+    <View style={styles.headerContainer}>
+    <Image
+          source={require('./assets/xhaw logo.png')} //logo and header title
+          style={styles.logo}
+          resizeMode="contain"
+          
+        />
+        <Text style={styles.title}>Empowering The Nation</Text>
+      
+      </View>
+      
+    
+      <View style={styles.headerContainer}>
+    <Image
+          source={require('./assets/contact us.png')} //logo and header title
+          style={styles.logo}
+          resizeMode="contain"
+          
+        />
+          <Text style={{fontSize:25, fontWeight:'bold',fontFamily:'serif'}}>Get in touch</Text>
+        </View>
+        
+        
+
+      <View style={styles.FirstAidbox}> {/*box that contains info for contact details for the institution*/}
+        <Text style={{fontWeight:'bold', fontSize:20, fontFamily:'sans-serif'}}>Phone number:+27 11 123 4567</Text>
+        <Text style={{fontWeight:'bold', fontSize:20, fontFamily:'sans-serif'}}>Email:info@empoweringthenation.co.za</Text>
+      
+      </View>
+      <View style={styles.spacer}></View>
+      <Text style={{fontWeight:'bold', fontSize:25, fontFamily:'serif'}}>Our Venues in Johannesburg:</Text>
+      <View style={styles.spacer}></View>
+      <Text style={{fontWeight:'bold', fontSize:20, fontFamily:'sans-serif'}}>Venue 1-Sandton</Text>
+      <Text style={{fontWeight:'bold', fontSize:20, fontFamily:'sans-serif'}}>125 Fouriesburg Street,Amberfield Glen, Johannesburg</Text>
+
+      <MapView 
+        style={styles.map}
+        initialRegion={{
+          latitude:  -25.87475,
+          longitude:  28.13108,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        }}
+      >
+        <Marker
+          coordinate={{ latitude: -25.87475, longitude: 28.13108 }}
+          title="Empowering the Nation Sandton"
+        />
+      </MapView>
+      <Text style={{fontWeight:'bold', fontSize:20, fontFamily:'sans-serif'}}>Venue 2-Soweto</Text>
+      <Text style={{fontWeight:'bold', fontSize:20, fontFamily:'sans-serif'}}>456 Growth Avenue, Soweto, Johannesburg</Text>
+
+      <MapView
+        style={styles.map}
+        initialRegion={{
+          latitude:  -26.266111,
+          longitude:  27.865833,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        }}
+      >
+        <Marker
+          coordinate={{ latitude: -26.266111, longitude: 27.865833 }} 
+          title="Empowering the Nation Soweto"
+        /> {/*shows locations of the institution*/}
+      </MapView>
+
+
+      <Text style={{fontWeight:'bold', fontSize:20, fontFamily:'sans-serif'}}>Venue 3-Midrand</Text>
+      <Text style={{fontWeight:'bold', fontSize:20, fontFamily:'sans-serif'}}>789 Prosperity Road, Midrand, Johannesburg</Text> {/*Physical addresses of the locations of the institutions*/}
+
+      <MapView
+        style={styles.map}
+        initialRegion={{
+          latitude:  -26.266111,
+          longitude:  27.865833,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        }}
+      > {/*coordinates of loaction of institutions*/}
+        <Marker
+          coordinate={{ latitude: -26.266111, longitude: 27.865833 }}
+          title="Empowering the Nation Soweto"
+        />
+      </MapView>
+      <View style={styles.contactUsButtoncontainer}>
+      <TouchableOpacity style={styles.button} onPress={()=> navigation.navigate('HomePage')}>
+    <Text style={styles.buttonText}>HOMEPAGE</Text>
+  </TouchableOpacity>
+    </View>
+      </View>
+      
+      
+
+
+
+  
+ )
+}
+
+
+
+function ThankYou({navigation}){
+return (
+    <View style={styles.container}>
+      <View style={styles.headerContainer}>
+    <Image
+          source={require('./assets/xhaw logo.png')} //logo and header title
+          style={styles.logo}
+          resizeMode="contain"
+          
+        />
+        <Text style={styles.title}>Empowering The Nation</Text>
+      
+      </View>
+      <View style={styles.spacer}>
+
+      </View>
+      <View style={styles.spacer}></View>
+        <View style={styles.mainPicture}>
+      <Image style={styles.imageSize}
+        source={require('./assets/thank you.png')}/>
+      </View>
+      <View style={styles.spacer}></View>
+      <Text style={styles.monthText}>Thank You for registering with us!</Text>
+      <Text style={styles.viewText}>We will be in touch shortly</Text>
+
+<View style={styles.spacer}></View>
+      <TouchableOpacity style={styles.button} onPress={()=> navigation.navigate('HomePage')}>
+    <Text style={styles.buttonText}>Homepage</Text>
+    </TouchableOpacity>
+      
+      
+     
+    </View>
+  );
+};
+
 
 const styles = StyleSheet.create({
   container: {
@@ -652,7 +1012,7 @@ const styles = StyleSheet.create({
   },
   SixMonthcontainer: {
     flex: 1,
-    backgroundColor: '#65A4CF',
+    backgroundColor: '#65A4CF',  //containers were made for each courses offered to have different colours
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -670,7 +1030,8 @@ fontFamily: 'serif',
     justifyContent:'center',
     alignItems: 'center',
     textAlign:'center',
-    borderColor:'#'
+    borderColor:'#000',
+    borderWidth: 2
 },
 spacer:{
   height: 50, // this will create space between components
@@ -726,7 +1087,7 @@ headerContainer:{
 },
 aidText:{
   color: 'white',
-  fontSize: 25,
+  fontSize: 30,
   fontWeight: 'bold',
   fontFamily: 'sans-serif', 
 }, 
@@ -738,13 +1099,13 @@ sumText:{
 },
 sewtext:{
   color: 'white',
-  fontSize: 25,
+  fontSize: 30,
   fontWeight: 'bold',
   fontFamily: 'sans-serif',
 },
 discountImage:{
-  width: 350,
-  height: 450,
+  width: 500,
+  height: 300,
 },
 distext:{
   color: 'Black',
@@ -785,10 +1146,11 @@ FirstAidbox:{
   width:350,
   height:100,
   backgroundColor:'#9DB0CA',
-  justifyContent:'center',
+  justifyContent:'center',   //box to display first aid info
   alignItems: 'center',
   textAlign:'center',
-  borderColor:'#'
+  borderColor:'#000',
+  borderWidth:2
 },
 
 Buttoncontainer: {
@@ -801,7 +1163,7 @@ Buttoncontainer: {
 },
 SewingButtoncontainer: {
   flexDirection: 'row',
-  backgroundColor: '#65A4CF',
+  backgroundColor: '#65A4CF',  //containers were made so that 2 buttons can be spaced next to one another 
   justifyContent:'space-between',
   gap:10
 
@@ -837,7 +1199,8 @@ cookingButtoncontainer: {
   flexDirection: 'row',
   backgroundColor:  '#65A4CF',
   justifyContent:'space-between',
-  gap:10
+  gap:10,
+  overflow: 'hidden', // Prevents anything from sticking out
 
 
 },
@@ -854,13 +1217,14 @@ cookingcontainer: {
   backgroundColor: '#65A4CF',
   alignItems: 'center',
   justifyContent: 'center',
+  overflow: 'hidden', // blocks background leaks
   
 
 
 },
 GardenMaintenanceButtoncontainer: {
   flexDirection: 'row',
-  backgroundColor:  '#9CB0C9',
+  backgroundColor:  '#3970C0',
   justifyContent:'space-between',
   gap:10
 
@@ -868,11 +1232,170 @@ GardenMaintenanceButtoncontainer: {
 },
 GardenMaintenancecontainer: {
   flex:1,
-  backgroundColor:  '#9CB0C9',
+  backgroundColor:  '#3970C0',
   justifyContent:'center',
   alignItems: 'center',
   
 
 
-}
+},
+ContactUscontainer: {
+  flex:1,
+  backgroundColor:  '#3871C1',
+  justifyContent:'center',
+  alignItems: 'center',
+  
+
+
+},
+contactUsButtoncontainer: {
+  flexDirection: 'row',
+  backgroundColor:  '#3871C1',
+  justifyContent:'space-between',
+  gap:10
+},
+
+
+CalculateFeescontainer: {
+  flex:1,
+  backgroundColor:  '#4FAFEB',
+  justifyContent:'center',
+  alignItems: 'center',
+  },
+InputBoxs:{
+  flexDirection: 'row',
+  marginTop: 10,
+  justifyContent: 'flex-start',
+  alignItems:'center',
+fontSize: 15,
+borderColor: '#ccc',
+  borderWidth: 1,
+  paddingHorizontal: 10,
+  borderRadius: 8,
+  marginBottom: 10,
+  backgroundColor:'#fff'
+},
+
+SelectedItem: {
+  backgroundColor: '#fcfd95', //colour appears when user selects a course on the select courses screen
+},
+CourseItem: {
+  padding: 12,
+  marginVertical: 6,
+  backgroundColor: '#eee', //styling for the flatlist of courses
+  borderRadius: 8,
+ alignItems:'center',
+},
+Detailsbox:{
+  width:280,
+  height:280,
+  backgroundColor:'#111e3e',  //styling for the box that contains the text input boxes for user to fill out
+  justifyContent:'center',
+  alignItems: 'center',
+  textAlign:'center',
+  borderColor:'#'
+},
+feesImage:{
+  width: 200,  //styling for image displayed on the calculate fees page 
+  height: 200,
+},
+imageSize:{
+  width: 300,
+  height: 150,
+},
+
+mainPicture:{
+  paddingTop: 40,
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor:'beige'
+
+},
+map: {
+  height: 100,      //styling for the maps of the institution
+  width: 300,
+    marginBottom: 10,
+    borderRadius: 10,
+},
+firstaidlogo: {
+  width: 120,      // Set desired width
+  height: 60,      // Set desired height
+  // optional: add margins or alignment if needed
+  // marginTop: 10,
+  // alignSelf: 'center',
+},
+sewinglogo: {
+  width: 120,      // Set desired width
+  height: 80,      // Set desired height
+  // optional: add margins or alignment if needed
+  // marginTop: 10,
+  // alignSelf: 'center',
+},
+lifeskillslogo: {
+  width: 120,      // Set desired width
+  height: 80,      // Set desired height
+  // optional: add margins or alignment if needed
+  // marginTop: 10,
+  // alignSelf: 'center',
+},
+gardenmaintenancelogo: {
+  width: 120,      // Set desired width
+  height: 80,      // Set desired height
+  // optional: add margins or alignment if needed
+  // marginTop: 10,
+  // alignSelf: 'center',
+},
+lanscapinglogo: {
+  width: 120,      // Set desired width
+  height: 80,      // Set desired height
+  // optional: add margins or alignment if needed
+  // marginTop: 10,
+  // alignSelf: 'center',
+},
+cookinglogo: {
+  width: 120,      // Set desired width
+  height: 80,      // Set desired height
+  // optional: add margins or alignment if needed
+  // marginTop: 10,
+  // alignSelf: 'center',
+},
+childmindinglogo: {
+  width: 120,      // Set desired width
+  height: 80,      // Set desired height
+  // optional: add margins or alignment if needed
+  // marginTop: 10,
+  // alignSelf: 'center',
+},
+viewDiscounts:{
+
+},
+linkText: {
+  color: 'blue',
+  textDecorationLine: 'underline',
+  // subtle opacity change on press (tap)
+},
+button: {
+  backgroundColor: '#F4A72B',
+  paddingVertical: 16,
+  paddingHorizontal: 32,
+  borderRadius: 40, // <- makes it rounded
+  alignItems: 'center',
+  borderColor: '#000', // Match container if needed
+  borderWidth: 2,
+
+  
+},
+buttonText: {   //BUTTON STYLING
+  color: '#fff',
+  fontWeight: 'bold',
+},
+coursesspacer:{
+  height: 20, // this will create space between components
+},
+Message: {
+  marginTop: 20,   //styling for display message when filling out form
+  fontSize: 16,
+  color: 'green',
+  textAlign: 'center',
+},
 });
